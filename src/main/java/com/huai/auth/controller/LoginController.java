@@ -14,7 +14,7 @@ public class LoginController {
     @RequestMapping("/")
     String login() {
         logger.info("1122 = {}","haha");
-        return "index";
+        return "auth/login";
     }
 
 }

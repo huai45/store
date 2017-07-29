@@ -6,28 +6,39 @@
 <title>首页</title>
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" th:href="@{//unpkg.com/iview/dist/styles/iview.css}" />
 <style type="text/css">
-    body{
-        font-family:微软雅黑;
-        font-size:14px;
-    }
+
 </style>
 </head>
 <body>
-<div>
-    top1
+<div id="app">
+    <div>
+        <i-button type="primary" @click="show">Click me!</i-button>
+        <Modal v-model="visible" title="Welcome">欢迎使用 iView</Modal>
+    </div>
+    <div layout:fragment="content"></div>
+    <div>
+        foot2
+    </div>
 </div>
-
-<div layout:fragment="content"></div>
-
-<!-- put the scripts below -->
+<script th:src="@{//vuejs.org/js/vue.min.js}"></script>
+<script th:src="@{//unpkg.com/iview/dist/iview.min.js}"></script>
 <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
-<div>
-    foot2
-</div>
 <script th:inline="javascript">
+new Vue({
+    el: '#app',
+    data: {
+        visible: false
+    },
+    methods: {
+        show: function () {
+            this.visible = true;
+        }
+    }
+})
 $(function(){
-    alert("init1!")
+    alert("1");
 })
 </script>
 </body>
