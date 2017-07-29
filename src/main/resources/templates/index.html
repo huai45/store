@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/default">
+<head>
+    <meta charset="UTF-8"/>
+    <title>index</title>
+</head>
+<body>
+<div layout:fragment="content" style="width:96%;margin-left:auto;margin-right:auto;">
+hello world!
+
+<!--
+这里若子页面中单独引入js文件，如这里的mainframe.js, 需将引用的其他js文件全部写到此js前面，
+即使是用到了layout.html中已经引用的jQuery.js文件，也需要将其重新再引入一遍，
+并且必须将js文件写进<div layout:fragment = "content"> 元素内，否则会出错
+-->
+<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script th:inline="javascript">
+$(function(){
+    alert("init2!")
+})
+</script>
+</div>
+</body>
+</html>
