@@ -1,5 +1,6 @@
 package com.huai.auth.controller;
 
+import com.huai.common.domain.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -18,7 +18,7 @@ public class LoginController {
 
     @RequestMapping("/")
     String login() {
-        logger.info("1122 = {}","haha");
+        logger.info("LoginController.login");
         return "auth/login";
     }
 
@@ -26,11 +26,7 @@ public class LoginController {
     @ResponseBody
     Object auth(@RequestBody Map vo) {
         logger.info("  auth   vo = {}",vo);
-        Map result = new HashMap();
-        result.put("success",true);
-        result.put("msg","登录成功");
-        result.put("page","/index");
-        return result;
+        return Result.success("登录成功","/index");
     }
 
     @RequestMapping("/index")
