@@ -2,21 +2,26 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
-<meta charset="utf-8" />
-<title>登录</title>
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" th:href="@{/styles/iview.css}" />
-<style type="text/css">
-
-</style>
+    <meta charset="utf-8" />
+    <title>登录</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/styles/iview.css}" />
+    <style type="text/css">
+        .mid{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width:600px;
+            height:100px;
+            margin-left:-300px;
+            margin-top:-50px;
+        }
+    </style>
 </head>
 <body>
-<template id="test" style="">
-    <div>
-    hellllllllllllllllllllllllllll
-        <i-button type="primary" @click="show">Click me!</i-button>
-        <Modal v-model="visible" title="Welcome">欢迎使用 iView</Modal>
+<template id="login">
+    <div class="mid">
         <i-form ref="formInline" :model="formInline" :rules="ruleInline" inline>
             <Form-item prop="user">
                 <i-input type="text" v-model="formInline.user" placeholder="Username">
@@ -34,36 +39,16 @@
         </i-form>
     </div>
 </template>
-<div id="app">
-    <h1>Hello Start!</h1>
-    <p>
-        <!-- 使用 router-link 组件来导航. -->
-        <!-- 通过传入 `to` 属性指定链接. -->
-        <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
-        <router-link to="/" tag="button">Go to Foo1</router-link>
-        <router-link to="/bar?id=hello&name=world" tag="button">Go to Bar1</router-link>
-        <router-link :to="{ name: 'getFoo', params: { id: 123,name:456 }}" tag="button">Go to Foo2</router-link>
-        <router-link to="/change?id=hello&name=vuejs" tag="button">Go to Bar2</router-link>
-        <router-link to="/barAlias?id=hello&name=deamon" tag="button">Go to BarAlias</router-link>
-        <router-link to="/test" tag="button">Go to test</router-link>
-    </p>
-    <!-- 路由出口 -->
-    <!-- 路由匹配到的组件将渲染在这里 -->
-    <router-view></router-view>
-    <p>
-    <h1>Hello End!</h1>
-    </p>
-</div>
+<div id="app"><router-view></router-view></div>
 <script th:src="@{/js/vue.min.js}"></script>
 <script th:src="@{/js/iview.min.js}"></script>
 <script th:src="@{/js/vue-router.js}"></script>
 <script th:src="@{/js/vue-resource.min.js}"></script>
 <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
 <script th:inline="javascript">
-//    Vue.http.options.emulateJSON = true;
     var app = {};
-    app.test = {
-        template: '#test',
+    app.login = {
+        template: '#login',
         data: function() {
             return {
                 visible: false,
@@ -83,109 +68,21 @@
             }
         },
         methods: {
-            show: function () {
-                var report = {
-                    id:'111',
-                    remark:'hahahehe'
-                }
-                this.$http.post('/test/data',report,{
-//                    emulateJSON:true
-                }).then(function(response){
-                    console.info("response:"+response);
-                    console.info("response.data:"+response.data);
-                    console.info("response.data:"+response.data.data);
-                    console.info("response.name:"+response.name);
-                    this.visible = true;
-                }, function(response){
-                    console.info(response);
-                })
-                //alert(' test ')
-            },
             handleSubmit: function (name) {
                 var that = this;
                 this.$refs[name].validate(function(valid){
                     if (valid) {
-                        that.$Message.success('提交成功!');
+                        that.$http.post('/test/data',this.formInline,{
+                        }).then(function(response){
+//                            that.$Message.success(response.data);
+                        }, function(response){
+//                            that.$Message.error(response.data);
+                            console.info(response);
+                        })
                     } else {
-                        that.$Message.error('表单验证失败!');
+                        that.$Message.error('登录信息验证失败!');
                     }
                 });
-            }
-
-        }
-    }
-    // 1. 定义（路由）组件。
-    app.list = {
-        template: '<div>app.list</div>',
-        beforeRouteEnter : function  (to, from, next) {
-            //alert(' beforeRouteEnter   Foo,to='+to+',from='+from+',next='+next)
-            next(function(vm){
-                vm.loadData();
-            })
-        },
-        beforeRouteLeave : function  (to, from, next) {
-            //alert(' beforeRouteLeave  Foo,to='+to+',from='+from+',next='+next)
-            this.deleteData()
-            next()
-        },
-        created : function  () {
-            // 组件创建完后获取数据，
-            // 此时 data 已经被 observed 了
-            this.fetchData()
-        },
-        watch: {
-            // 如果路由有变化，会再次执行该方法 路由变化是指url变化了
-            '$route':'fetchData'
-        },
-        methods: {
-            loadData: function () {
-                alert('loadData , route = '+this.$route.path)
-                var report = {
-                    id:'111',
-                    remark:'hahahehe'
-                }
-            },
-            fetchData: function () {
-                //alert('fetchData')
-                console.log( ' fetchData ' );
-            },
-            deleteData: function () {
-                alert('deleteData , route = '+this.$route)
-            }
-        }
-    }
-    var Bar = {
-        template: '<div>bar ,id={{ $route.query.id}} , name={{ $route.query.name}}.</div>',
-        beforeRouteEnter : function  (to, from, next) {
-            //alert('Foo,to='+to+',from='+from+',next='+next)
-            next(function(vm){
-                vm.loadData();
-            })
-
-        },
-        beforeRouteLeave : function  (to, from, next) {
-            //alert('Foo,to='+to+',from='+from+',next='+next)
-            this.deleteData()
-            next()
-        },
-        created : function  () {
-            // 组件创建完后获取数据，
-            // 此时 data 已经被 observed 了
-            this.fetchData()
-        },
-        watch: {
-            '$route':'fetchData'
-        },
-        methods: {
-            loadData: function () {
-                alert('loadData , route = '+this.$route.path)
-            },
-            fetchData: function () {
-                //alert('fetchData')
-                console.log( ' fetchData ' );
-            },
-            deleteData: function () {
-                alert('deleteData , route = '+this.$route)
             }
         }
     }
@@ -193,40 +90,14 @@
     var routes = [
         {
             path: '/',
-            name: 'getFoo',
-            component: app.list,
-            beforeEnter: function  (to, from, next) {
-                //alert('beforeEnter,to='+to+',from='+from+',next='+next)
-                next()
-                //next(to)    //此写法会进入死循环，不断进入beforeEnter方法
-            }
-        },
-        {
-            path: '/bar',
-            name: 'getBar',
-            alias: '/barAlias',
-            component: Bar
-        },
-        {
-            path: '/change',
-            redirect: '/bar'
-        },
-        {
-            path: '/test',
-            name: 'test',
-            component: app.test
+            name: 'login',
+            component: app.login
         }
-
     ]
 
     var router = new VueRouter({
         routes: routes
     });
-
-    router.beforeEach( function(to, from, next) {
-        //alert('beforeEach ,to='+to+',from='+from+',next='+next)
-        next()
-    })
 
     var app = new Vue({
         el:'#app',
