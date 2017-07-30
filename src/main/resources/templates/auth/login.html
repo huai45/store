@@ -11,10 +11,10 @@
         .mid{
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 35%;
             width:600px;
             height:100px;
-            margin-left:-300px;
+            margin-left:-200px;
             margin-top:-50px;
         }
     </style>
@@ -22,6 +22,9 @@
 <body>
 <template id="login">
     <div class="mid">
+        <i-row>
+            <i-col span="24" style="text-align: center;font-size:30px;line-height: 150px;position: relative;left: -110px;">新门店系统</i-col>
+        </i-row>
         <i-form ref="formInline" :model="formInline" :rules="ruleInline" inline>
             <Form-item prop="user">
                 <i-input type="text" v-model="formInline.user" placeholder="Username">
@@ -62,7 +65,7 @@
                     ],
                     password: [
                         { required: true, message: '请填写密码', trigger: 'blur' },
-                        { type: 'string', min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
+                        { type: 'string', min: 5, message: '密码长度不能小于5位', trigger: 'blur' }
                     ]
                 }
             }
@@ -72,12 +75,16 @@
                 var that = this;
                 this.$refs[name].validate(function(valid){
                     if (valid) {
-                        that.$http.post('/test/data',this.formInline,{
+                        var third = that;
+                        that.$http.post('/auth',that.formInline,{
                         }).then(function(response){
-//                            that.$Message.success(response.data);
+                            if(response.data.success==true){
+                                document.location.href=response.data.page;
+                            }else{
+                                third.$Message.error(response.data.msg);
+                            }
                         }, function(response){
-//                            that.$Message.error(response.data);
-                            console.info(response);
+                            third.$Message.error(response.data.msg);
                         })
                     } else {
                         that.$Message.error('登录信息验证失败!');
@@ -96,6 +103,7 @@
     ]
 
     var router = new VueRouter({
+        mode: 'history',
         routes: routes
     });
 
