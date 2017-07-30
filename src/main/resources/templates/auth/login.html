@@ -22,9 +22,9 @@
 <body>
 <template id="login">
     <div class="mid">
-        <i-row>
+        <Row>
             <i-col span="24" style="text-align: center;font-size:30px;line-height: 150px;position: relative;left: -110px;">新门店系统</i-col>
-        </i-row>
+        </Row>
         <i-form ref="formInline" :model="formInline" :rules="ruleInline" inline>
             <Form-item prop="user">
                 <i-input type="text" v-model="formInline.user" placeholder="Username">
