@@ -3,37 +3,25 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="layout/default">
 <head>
-<meta charset="utf-8" />
-<title>登录</title>
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" th:href="@{/styles/iview.css}" />
-<style type="text/css">
-.layout-breadcrumb{
-    padding: 0px;margin-bottom:10px;
-}
-</style>
-</head>
-<body style="background-color: #eee;">
-<div layout:fragment="content" style="width:1280px;margin:15px auto;height:1500px;background-color: #ffffff;">
+    <meta charset="utf-8" />
+    <title>登录</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/styles/iview.css}" />
+    <style type="text/css">
 
+    </style>
+</head>
+<body>
+<div layout:fragment="content" style="width:96%;margin-left:auto;margin-right:auto;">
 <template id="test" style="">
     <div>
         hellllllllllllllllllllllllllll
         <i-button type="primary" @click="show">Click me!</i-button>
         <Modal v-model="visible" title="Welcome">欢迎使用 iView index</Modal>
+
     </div>
 </template>
-<div id="layout-breadcrumb" class="layout-breadcrumb">
-    <div style="padding:10px;background-color: #fff;">
-        <Breadcrumb>
-            <Breadcrumb-item href="#">首页</Breadcrumb-item>
-            <Breadcrumb-item href="#">应用中心</Breadcrumb-item>
-            <Breadcrumb-item>某应用</Breadcrumb-item>
-        </Breadcrumb>
-    </div>
-    <div style="height:15px;background-color: #eee;"></div>
-</div>
 <div id="app">
     <h1>Hello Start!</h1>
     <p>
@@ -139,7 +127,7 @@
         },
         methods: {
             loadData: function () {
-//                alert('loadData1 , route = '+this.$route.path)
+                alert('loadData1 , route = '+this.$route.path)
             },
             fetchData: function () {
                 //alert('fetchData')
@@ -216,6 +204,7 @@
     ]
 
     var router = new VueRouter({
+        mode: 'history',
         routes: routes
     });
 
@@ -228,11 +217,7 @@
         el:'#app',
         router:router
     })
-
-    var breadcrumb = new Vue({
-        el:'#layout-breadcrumb'
-    })
-
+//    alert(123)
 </script>
 </div>
 </body>

@@ -2,24 +2,104 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
-<meta charset="utf-8" />
-<title>首页</title>
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" th:href="@{/styles/iview.css}" />
-<style type="text/css">
-
-</style>
+    <meta charset="utf-8" />
+    <title>首页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/styles/iview.css}" />
+    <style type="text/css">
+        .layout-logo{
+            width: 120px;
+            line-height: 60px;
+            float: left;
+            position: relative;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .layout-nav-left{
+            float: left;
+        }
+        .layout-nav-right{
+            float: right;
+        }
+        .layout-copy{
+            text-align: center;
+            padding: 10px 0 20px;
+            color: #9ea7b4;
+        }
+    </style>
 </head>
 <body>
-<div id="head">
-        <i-button type="primary" @click="show">Click me!</i-button>
-        <i-button type="primary" @click="goback">退出</i-button>
-        <Modal v-model="visible" title="Welcome">欢迎使用 iView default</Modal>
+<div id="head" style="">
+    <i-menu mode="horizontal" :theme="theme1" active-name="home" @on-select="handleSelect" >
+        <div class="layout-logo">N-STORE</div>
+        <div class="layout-nav-left">
+            <Menu-item name="home">
+                <Icon type="ios-home"></Icon>
+                我的门店
+            </Menu-item>
+            <Menu-item name="user">
+                <Icon type="ios-people"></Icon>
+                用户管理
+            </Menu-item>
+            <Submenu name="3">
+                <template slot="title">
+                    <Icon type="podium"></Icon>
+                    统计分析
+                </template>
+                <Menu-group title="使用">
+                    <Menu-item name="3-1">新增和启动</Menu-item>
+                    <Menu-item name="3-2">活跃分析</Menu-item>
+                    <Menu-item name="3-3">时段分析</Menu-item>
+                </Menu-group>
+                <Menu-group title="留存">
+                    <Menu-item name="3-4">用户留存</Menu-item>
+                    <Menu-item name="3-5">流失用户</Menu-item>
+                </Menu-group>
+            </Submenu>
+            <Submenu name="stock">
+                <template slot="title">
+                    <Icon type="android-cart"></Icon>
+                    库存管理
+                </template>
+                <Menu-group title="使用">
+                    <Menu-item name="3-1">新增和启动</Menu-item>
+                    <Menu-item name="3-2">活跃分析</Menu-item>
+                    <Menu-item name="3-3">时段分析</Menu-item>
+                </Menu-group>
+                <Menu-group title="留存">
+                    <Menu-item name="3-4">用户留存</Menu-item>
+                    <Menu-item name="3-5">流失用户</Menu-item>
+                </Menu-group>
+            </Submenu>
+            <Menu-item name="setting">
+                <Icon type="android-settings"></Icon>
+                设置
+            </Menu-item>
+        </div>
+        <div class="layout-nav-right">
+            <Menu-item name="search">
+                <Icon type="ios-search-strong"></Icon>
+                搜索
+            </Menu-item>
+            <Menu-item name="support">
+                支持
+            </Menu-item>
+            <Submenu name="account">
+                <template slot="title">
+                    <Icon type="android-contact"></Icon>
+                    huai23@qq.com
+                </template>
+                <Menu-item name="logout">退出</Menu-item>
+            </Submenu>
+        </div>
+    </i-menu>
 </div>
 <div layout:fragment="content"></div>
-<div id="foot">
-    foot
+<div id="foot" class="layout-copy">
+    2011-2017 &copy; n-store
+    <Back-top></Back-top>
 </div>
 <script th:src="@{/js/vue.min.js}"></script>
 <script th:src="@{/js/iview.min.js}"></script>
@@ -27,37 +107,45 @@
 <script th:src="@{/js/vue-resource.min.js}"></script>
 <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
 <script th:inline="javascript">
-new Vue({
-    el: '#head',
-    data: {
-        visible: false
-    },
-    methods: {
-        show: function () {
-            this.visible = true;
+    new Vue({
+        el: '#head',
+        data: {
+            visible: false,
+            theme1: 'light'
         },
-        goback: function() {
-            history.back(-1);
+        methods: {
+            show: function () {
+                this.visible = true;
+            },
+            handleSelect: function(name) {
+                if("logout"==name){
+                    document.location.href="/";
+                }else{
+                    alert(name);
+                }
+            },
+            goback: function() {
+                history.back(-1);
+            }
         }
-    }
-})
-new Vue({
-    el: '#foot',
-    data: {
-        visible: false
-    },
-    methods: {
-        show: function () {
-            this.visible = true;
+    })
+    new Vue({
+        el: '#foot',
+        data: {
+            visible: false
         },
-        goback: function() {
-            history.back(-1);
+        methods: {
+            show: function () {
+                this.visible = true;
+            },
+            goback: function() {
+                history.back(-1);
+            }
         }
-    }
-})
-$(function(){
+    })
+    $(function(){
 
-})
+    })
 </script>
 </body>
 </html>
