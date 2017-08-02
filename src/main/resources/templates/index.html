@@ -23,13 +23,20 @@
         <Modal v-model="visible" title="Welcome">欢迎使用 iView index</Modal>
         <p></p>
         <i-select
-                v-model="stock"
-                filterable
-                remote
-                :remote-method="remoteMethod"
-                :loading="loading">
+            v-model="stock"
+            filterable
+            remote
+            placeholder="请选择物品"
+            size="large"
+            :remote-method="remoteMethod"
+            :loading="loading"
+            style="width:400px"
+        >
             <i-option v-for="option in stockList" :value="option.value" :key="option.value">{{option.label}}</i-option>
         </i-select>
+
+        <i-button type="primary" @click="submitForm">提交</i-button>
+
     </div>
 </template>
 <div id="layout-breadcrumb" class="layout-breadcrumb">
@@ -77,12 +84,7 @@
                 visible: false,
                 loading: false,
                 stock:"",
-                stockList:[
-                    {
-                        value: 'beijing',
-                        label: '北京市'
-                    }
-                ],
+                stockList:[],
                 list:[
                     {
                         value: 'beijing',
@@ -95,13 +97,19 @@
                 ]
             }
         },
+        created : function  () {
+            // 组件创建完后获取数据，
+            // 此时 data 已经被 observed 了
+            this.loadData()
+        },
         methods: {
+
             show: function () {
                 var report = {
                     id:'111',
                     remark:'hahahehe'
                 }
-                this.$http.post('/test/data',report,{
+                this.$http.get('/test/data',{
 //                    emulateJSON:true
                 }).then(function(response){
                     console.info("response:"+response);
@@ -114,6 +122,19 @@
                 })
                 //alert(' test ')
             },
+            loadData: function () {
+                var item = {
+                    value: 'tianjin',
+                    label: '天津市'
+                }
+                this.stockList.push(item)
+                this.list.push(item)
+                this.$http.get('/test/data',{}).then(function(response){
+                    this.list = response.data.data;
+                }, function(response){
+
+                }).bind(this);
+            },
             handleSubmit: function (name) {
                 var that = this;
                 this.$refs[name].validate(function(valid){
@@ -124,20 +145,26 @@
                     }
                 });
             },
+            submitForm: function () {
+                alert(this.stock)
+            },
             remoteMethod: function (query) {
 //                alert(query)
 //                this.stockList = this.list;
                 if (query !== '') {
                     this.loading = true;
                     this.stockList = [];
+                    this.loading = false;
                     for (var index in this.list) {
                         var value = this.list[index].value.toLowerCase();
 //                        alert("item = "+this.list[item].value);
-                        if(value.indexOf(query.toLowerCase()) > -1){
+                        if(value.indexOf(query.toLowerCase()) == 0){
+                            this.stockList.push(this.list[index])
+                        }else if(this.list[index].label.indexOf(query.toLowerCase()) > -1){
                             this.stockList.push(this.list[index])
                         }
                     }
-                    this.loading = false;
+
                 }else{
                     this.stockList = [];
                 }

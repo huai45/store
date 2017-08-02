@@ -32,12 +32,16 @@ public class TestController {
         return result;
     }
 
-    @PostMapping("/data")
+    @GetMapping("/data")
     @ResponseBody
-    Object data(@RequestBody Map report) {
-        logger.info(" report = {} ",report);
+    Object data() {
+
+        List foods = jdbcTemplate.queryForList("select CONCAT(abbr,'__',food_id) as value, food_name label from td_food ");
+
+        logger.info(" foods = {} ",foods.size());
+
         Map result = new HashMap();
-        result.put("data","Hello World!");
+        result.put("data",foods);
         return result;
     }
 
