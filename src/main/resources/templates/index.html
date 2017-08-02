@@ -21,6 +21,15 @@
         hellllllllllllllllllllllllllll
         <i-button type="primary" @click="show">Click me!</i-button>
         <Modal v-model="visible" title="Welcome">欢迎使用 iView index</Modal>
+        <p></p>
+        <i-select
+                v-model="stock"
+                filterable
+                remote
+                :remote-method="remoteMethod"
+                :loading="loading">
+            <i-option v-for="option in stockList" :value="option.value" :key="option.value">{{option.label}}</i-option>
+        </i-select>
     </div>
 </template>
 <div id="layout-breadcrumb" class="layout-breadcrumb">
@@ -66,19 +75,24 @@
         data: function() {
             return {
                 visible: false,
-                formInline: {
-                    user: '',
-                    password: ''
-                },
-                ruleInline: {
-                    user: [
-                        { required: true, message: '请填写用户名', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: '请填写密码', trigger: 'blur' },
-                        { type: 'string', min: 6, message: '密码长度不能小于6位', trigger: 'blur' }
-                    ]
-                }
+                loading: false,
+                stock:"",
+                stockList:[
+                    {
+                        value: 'beijing',
+                        label: '北京市'
+                    }
+                ],
+                list:[
+                    {
+                        value: 'beijing',
+                        label: '北京市'
+                    },
+                    {
+                        value: 'shanghai',
+                        label: '上海市'
+                    }
+                ]
             }
         },
         methods: {
@@ -109,8 +123,25 @@
                         that.$Message.error('表单验证失败!');
                     }
                 });
+            },
+            remoteMethod: function (query) {
+//                alert(query)
+//                this.stockList = this.list;
+                if (query !== '') {
+                    this.loading = true;
+                    this.stockList = [];
+                    for (var index in this.list) {
+                        var value = this.list[index].value.toLowerCase();
+//                        alert("item = "+this.list[item].value);
+                        if(value.indexOf(query.toLowerCase()) > -1){
+                            this.stockList.push(this.list[index])
+                        }
+                    }
+                    this.loading = false;
+                }else{
+                    this.stockList = [];
+                }
             }
-
         }
     }
     // 1. 定义（路由）组件。
@@ -187,7 +218,7 @@
 
     var routes = [
         {
-            path: '/',
+            path: '/test',
             name: 'getFoo',
             component: login.list,
             beforeEnter: function  (to, from, next) {
@@ -207,7 +238,7 @@
             redirect: '/bar'
         },
         {
-            path: '/test',
+            path: '/',
             name: 'test',
             component: login.test
         }

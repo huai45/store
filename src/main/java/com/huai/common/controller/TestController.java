@@ -23,8 +23,7 @@ public class TestController {
 
     @GetMapping("/hello")
     @ResponseBody
-    Object hello(@ModelAttribute Map report) {
-        logger.info(" report = {} ",report);
+    Object hello() {
         List data = jdbcTemplate.queryForList("select * from td_food ");
         System.out.println("中文");
         logger.info("data = {}",data);
