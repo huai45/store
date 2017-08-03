@@ -18,10 +18,9 @@
 <div layout:fragment="content" style="width:1280px;min-height: 600px;margin:15px auto;background-color: #ffffff;">
 <template id="test" style="">
     <div>
-        hellllllllllllllllllllllllllll
-        <i-button type="primary" @click="show">Click me!</i-button>
+        <p>hello world!</p>
         <Modal v-model="visible" title="Welcome">欢迎使用 iView index</Modal>
-        <p></p>
+        <p><i-button type="primary" @click="show">Click me!</i-button></p>
         <i-select
             v-model="stock"
             filterable
@@ -75,7 +74,7 @@
 <script th:src="@{/js/vue-resource.min.js}"></script>
 <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
 <script th:inline="javascript">
-    //    Vue.http.options.emulateJSON = true;
+    //    Vue.http.options.emulateJSON = true;  //跨域调用时才有效
     var login = {};
     login.test = {
         template: '#test',
@@ -103,24 +102,8 @@
             this.loadData()
         },
         methods: {
-
             show: function () {
-                var report = {
-                    id:'111',
-                    remark:'hahahehe'
-                }
-                this.$http.get('/test/data',{
-//                    emulateJSON:true
-                }).then(function(response){
-                    console.info("response:"+response);
-                    console.info("response.data:"+response.data);
-                    console.info("response.data:"+response.data.data);
-                    console.info("response.name:"+response.name);
-                    this.visible = true;
-                }, function(response){
-                    console.info(response);
-                })
-                //alert(' test ')
+                this.visible = true;
             },
             loadData: function () {
                 var item = {
@@ -155,18 +138,21 @@
                     this.loading = true;
                     this.stockList = [];
                     this.loading = false;
-                    for (var index in this.list) {
-                        var value = this.list[index].value.toLowerCase();
-//                        alert("item = "+this.list[item].value);
-                        if(value.indexOf(query.toLowerCase()) == 0){
-                            this.stockList.push(this.list[index])
-                        }else if(this.list[index].label.indexOf(query.toLowerCase()) > -1){
-                            this.stockList.push(this.list[index])
-                        }
-                    }
-
+//                    for (var index in this.list) {
+//                        var value = this.list[index].value.toLowerCase();
+////                        alert("item = "+this.list[item].value);
+//                        if(value.indexOf(query.toLowerCase()) == 0){
+//                            this.stockList.push(this.list[index])
+//                        }else if(this.list[index].label.indexOf(query.toLowerCase()) > -1){
+//                            this.stockList.push(this.list[index])
+//                        }
+//                    }
+                    this.stockList = this.list.filter(function(elem, pos) {
+                        return elem.value.toLowerCase().indexOf(query.toLowerCase()) == 0||elem.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
+                    });
                 }else{
                     this.stockList = [];
+                    this.stock = '';
                 }
             }
         }
