@@ -23,13 +23,13 @@
             v-model="stock"
             filterable
             remote
-            placeholder="请选择物品"
+            placeholder="请输入物品名称或缩写字母"
             size="large"
             :remote-method="remoteMethod"
             :loading="loading"
             style="width:400px"
         >
-            <i-option v-for="item in stockList" :value="item.abbr" :key="item.abbr">{{item.stockName}}</i-option>
+            <i-option v-for="item in stockList" :value="item.abbr+'-'+item.stockId" :key="item.stockName">{{item.stockName}}</i-option>
         </i-select>
         <i-button type="primary" @click="submitForm">提交</i-button>
     </div>
@@ -61,6 +61,7 @@
                 loading: false,
                 stock:"",
                 stockList:[],
+                selected:[],
                 list:[
 
                 ]
@@ -75,9 +76,7 @@
                     id:'111',
                     remark:'hahahehe'
                 }
-                this.$http.get('/stock/api/list',{
-//                    emulateJSON:true
-                }).then(function(response){
+                this.$http.get('/stock/api/list',{}).then(function(response){
                     console.info("response:"+response);
                     console.info("response.data:"+response.data);
                     console.info("response.data:"+response.data.data);
@@ -86,16 +85,12 @@
                 }, function(response){
                     console.info(response);
                 })
-                //alert(' test ')
             },
             loadData: function () {
                 var item = {
-                    abbr: 'beijing',
-                    stockName: '测试物品',
-                    stockId: '0'
+
                 }
                 this.stockList.push(item)
-                this.list.push(item)
                 this.$http.get('/stock/api/list',{}).then(function(response){
                     this.list = response.data;
                 }, function(response){
@@ -114,14 +109,12 @@
             },
             submitForm: function () {
                 alert(this.stock)
+                this.stock = "";
+                this.stockList = [];
             },
             remoteMethod: function (query) {
 //                alert(query)
-//                this.stockList = this.list;
                 if (query !== '') {
-                    this.loading = true;
-                    this.stockList = [];
-                    this.loading = false;
                     this.stockList = this.list.filter(function(elem, pos) {
                         return elem.abbr.toLowerCase().indexOf(query.toLowerCase()) == 0||elem.stockName.toLowerCase().indexOf(query.toLowerCase()) > -1;
                     })
