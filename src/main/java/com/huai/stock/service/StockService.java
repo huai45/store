@@ -2,6 +2,7 @@ package com.huai.stock.service;
 
 import com.huai.stock.dao.StockRepository;
 import com.huai.stock.domain.Stock;
+import com.huai.stock.domain.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,5 +20,16 @@ public class StockService {
     public List<Stock> findStockList() {
         List<Stock> stockList = stockRepository.findStockList();
         return stockList;
+    }
+
+    public List<Supplier> findSupplierList() {
+        List<Supplier> supplierList = stockRepository.findSupplierList();
+        return supplierList;
+    }
+
+
+    public Stock getStockById(String stockId) {
+        Stock stock = stockRepository.getStockById(stockId);
+        return stock;
     }
 }

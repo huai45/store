@@ -3,155 +3,374 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="layout/default">
 <head>
-<meta charset="utf-8" />
-<title>采购</title>
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" th:href="@{/styles/iview.css}" />
-<style type="text/css">
-.layout-breadcrumb{
-    padding: 0px;margin-bottom:10px;
-}
-</style>
+    <meta charset="utf-8" />
+    <title>采购</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" th:href="@{/styles/iview.css}" />
+    <style type="text/css">
+        .layout-breadcrumb{
+            padding: 0px;margin-bottom:10px;
+        }
+    </style>
 </head>
 <body style="background-color: #eee;">
 <div layout:fragment="content" style="width:1280px;min-height: 600px;margin:15px auto;background-color: #ffffff;">
-<template id="stock_in" style="">
-    <div>
-        <Modal v-model="visible" title="Welcome">欢迎使用 iView index</Modal>
-        <i-select
-            v-model="stock"
-            filterable
-            remote
-            placeholder="请输入物品名称或缩写字母"
-            size="large"
-            :remote-method="remoteMethod"
-            :loading="loading"
-            style="width:400px"
-        >
-            <i-option v-for="item in stockList" :value="item.abbr+'-'+item.stockId" :key="item.stockName">{{item.stockName}}</i-option>
-        </i-select>
-        <i-button type="primary" @click="submitForm">提交</i-button>
+    <template id="stock_in" style="">
+        <div>
+            <Modal v-model="visible" title="请填写采购信息" ok-text = "确定" @on-ok="add('orderForm')" width="900" >
+                <i-form ref="orderForm" :model="query" :rules="orderRule" :label-width="80" >
+                    <Row>
+                        <i-col span="8" >
+                            <Form-item label="名称：">
+                                {{stock.stockName}}
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="分类：">
+                                {{stock.categoryId}}
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="类型：">
+                                {{stock.type}}
+                            </Form-item>
+                        </i-col>
+                    </Row>
+                    <Row>
+                        <i-col span="8" >
+                            <Form-item label="上次单价：">
+                                {{stock.price}}
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="单位：">
+                                {{stock.unit}}
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="品牌：">
+                                {{stock.brand}}
+                            </Form-item>
+                        </i-col>
+                    </Row>
+                    <Row>
+                        <i-col span="8" >
+                            <Form-item label="单价：" prop="price">
+                                <Input-number v-model="query.price" style="width:200px" ></Input-number>
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="数量：" prop="count">
+                                <Input-number v-model="query.count" style="width:200px" ></Input-number>
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="总价：" prop="total">
+                                <Input-number v-model="query.total" style="width:200px" disabled ></Input-number>
+                            </Form-item>
+                        </i-col>
+                    </Row>
+                    <Row>
+                        <i-col span="8" >
+                            <Form-item label="供应商：" prop="supplierId">
+                                <i-select v-model="query.supplierId" filterable style="width:200px">
+                                    <i-option v-for="supplier in supplierList" :value="supplier.supplierId" :key="supplier.supplierName">{{ supplier.supplierName }}</i-option>
+                                </i-select>
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="采购日期：" prop="buyDate">
+                                <Date-picker type="date" placeholder="选择日期" clearable=false v-model="query.buyDate"></Date-picker>
+                            </Form-item>
+                        </i-col>
+                        <i-col span="8" >
+                            <Form-item label="挂账：" prop="gender">
+                                <Radio-group v-model="query.gz">
+                                    <Radio label="1">是</Radio>
+                                    <Radio label="0">否</Radio>
+                                </Radio-group>
+                            </Form-item>
+                        </i-col>
+                    </Row>
+                </i-form>
+                <div slot="footer" style="text-align:center">
+                    <i-button type="primary" @click="add('orderForm')" size="large" style="width:120px;">确定</i-button>
+                </div>
+            </Modal>
+
+            <Row>
+                <i-col span="24" style="padding-left:400px;">
+                    <i-select
+                            v-model="selectStockId"
+                            filterable
+                            remote
+                            placeholder="请输入物品名称或缩写字母"
+                            size="large"
+                            :remote-method="remoteMethod"
+                            :loading="loading"
+                            @on-change="submitForm2"
+                            style="width:400px"
+                    >
+                        <i-option v-for="item in stockList" :value="item.abbr+'-'+item.stockId" :key="item.stockName">{{item.stockName}}</i-option>
+                    </i-select>
+                    <i-button type="primary" @click="submitForm" style="margin-left: 20px;">填单</i-button>
+
+                </i-col>
+            </Row>
+            <i-table border :columns="columns" :data="orderList" no-data-text="尚未录入单据" stripe="true" style="margin-top: 50px;"></i-table>
+            <br>
+            <i-button type="primary" size="large" @click="saveOrder" :loading="loading" icon="android-upload" style="margin-left:580px;margin-top:20px">
+                <span v-if="!loading">提交审核</span>
+                <span v-else>提交中,请稍后...</span>
+            </i-button>
+        </div>
+    </template>
+    <div id="layout-breadcrumb" class="layout-breadcrumb">
+        <div style="padding:10px;background-color: #fff;">
+            <Breadcrumb>
+                <Breadcrumb-item href="#">库存</Breadcrumb-item>
+                <Breadcrumb-item href="#">单据</Breadcrumb-item>
+                <Breadcrumb-item>采购</Breadcrumb-item>
+            </Breadcrumb>
+        </div>
+        <div style="height:15px;background-color: #eee;"></div>
     </div>
-</template>
-<div id="layout-breadcrumb" class="layout-breadcrumb">
-    <div style="padding:10px;background-color: #fff;">
-        <Breadcrumb>
-            <Breadcrumb-item href="#">库存</Breadcrumb-item>
-            <Breadcrumb-item href="#">单据</Breadcrumb-item>
-            <Breadcrumb-item>采购</Breadcrumb-item>
-        </Breadcrumb>
+    <div id="app" style="padding: 10px;">
+        <router-view></router-view>
     </div>
-    <div style="height:15px;background-color: #eee;"></div>
-</div>
-<div id="app" style="padding: 10px;">
-    <router-view></router-view>
-</div>
-<script th:src="@{/js/vue.min.js}"></script>
-<script th:src="@{/js/iview.min.js}"></script>
-<script th:src="@{/js/vue-router.js}"></script>
-<script th:src="@{/js/vue-resource.min.js}"></script>
-<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
-<script th:inline="javascript">
-    var stock_in = {
-        template: '#stock_in',
-        data: function() {
-            return {
-                visible: false,
-                loading: false,
-                stock:"",
-                stockList:[],
-                selected:[],
-                list:[
+    <script th:src="@{/js/vue.min.js}"></script>
+    <script th:src="@{/js/iview.min.js}"></script>
+    <script th:src="@{/js/vue-router.js}"></script>
+    <script th:src="@{/js/vue-resource.min.js}"></script>
+    <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+    <script th:inline="javascript">
+        var stock_in = {
+            template: '#stock_in',
+            data: function() {
+                return {
+                    columns: [
+                        {
+                            title: '物品名称',
+                            key: 'stockName'
+                        },
+                        {
+                            title: '采购单价',
+                            key: 'price'
+                        },
+                        {
+                            title: '采购数量',
+                            key: 'count'
+                        },
+                        {
+                            title: '单位',
+                            key: 'unit'
+                        },
+                        {
+                            title: '合计',
+                            key: 'total'
+                        },
+                        {
+                            title: '采购日期',
+                            key: 'buyDate'
+                        },
+                        {
+                            title: '挂账',
+                            key: 'gz'
+                        },
+                        {
+                            title: '操作',
+                            key: 'action',
+                            align: 'center',
+                            width: 80,
+                            render:function(h, params) {//render 函数传入两个参数，第一个是 h，第二个是对象，包含 row、column 和 index，分别指当前单元格数据，当前列数据，当前是第几行。
+                                var that = this;
+                                return h('i-button',
+                                    {
+                                        props: {
+                                            type: 'error',
+                                            size: 'small'
+                                        },
+                                        on:{
+                                            click:function(){
+                                                //alert(params.row.stockName);
+                                                that.remove(params.index);
+                                            }
+                                        }
+                                    },
+                                    "删除"
+                                );
+                            }.bind(this)
+                        }
+                    ],
+                    orderRule: {
+                        price: [
+                            { type: 'number' ,required: true, message: '请填写采购单价', trigger: 'blur' }
+                        ],
+                        count: [
+                            { type: 'number' ,required: true, message: '请填写采购数量', trigger: 'blur' },
+                            { type: 'number' , min:0 ,message: '数量必须大于零', trigger: 'blur' }
+                        ]
+                    },
+                    visible: false,
+                    loading: false,
+                    selectStockId:"",
+                    stockList:[],
+                    supplierList:[],
+                    orderList:[],
+                    list:[
 
-                ]
-            }
-        },
-        created : function  () {
-            this.loadData()
-        },
-        methods: {
-            show: function () {
-                var report = {
-                    id:'111',
-                    remark:'hahahehe'
+                    ],
+                    query:{
+                        price:"",
+                        count:"",
+                        total:"",
+                        gz:"0",
+                        supplierId:"supplier147282",
+                        buyDate:new Date()
+                    },
+                    stock:{
+                        stockId:"",
+                        stockName:"",
+                        abbr:"",
+                        brand:"",
+                        unit:"",
+                        price:"",
+                        count:"",
+                        categoryId:"",
+                        supplierId:"",
+                        type:""
+                    },
+                    loading : false
                 }
-                this.$http.get('/stock/api/list',{}).then(function(response){
-                    console.info("response:"+response);
-                    console.info("response.data:"+response.data);
-                    console.info("response.data:"+response.data.data);
-                    console.info("response.name:"+response.name);
-                    this.visible = true;
-                }, function(response){
-                    console.info(response);
-                })
             },
-            loadData: function () {
-                var item = {
-
-                }
-                this.stockList.push(item)
-                this.$http.get('/stock/api/list',{}).then(function(response){
-                    this.list = response.data;
-                }, function(response){
-
-                }).bind(this);
+            created : function  () {
+                this.loadData()
             },
-            handleSubmit: function (name) {
-                var that = this;
-                this.$refs[name].validate(function(valid){
-                    if (valid) {
-                        that.$Message.success('提交成功!');
-                    } else {
-                        that.$Message.error('表单验证失败!');
+            methods: {
+                add: function (name) {
+                    if(this.query.price&&this.query.price){
+                        this.query.total = this.query.price * this.query.count;
                     }
-                });
-            },
-            submitForm: function () {
-                alert(this.stock)
-                this.stock = "";
-                this.stockList = [];
-            },
-            remoteMethod: function (query) {
+                    var that = this;
+                    this.$refs[name].validate(function(valid){
+                        if(valid){
+                            var order = {};
+                            order.stockId = that.stock.stockId;
+                            order.stockName = that.stock.stockName;
+                            order.unit = that.stock.unit;
+                            order.price = that.query.price;
+                            order.count = that.query.count;
+                            order.total = that.query.total;
+                            order.gz = that.query.gz;
+                            order.supplierId = that.query.supplierId;
+                            if(that.query.buyDate){
+                                order.buyDate = that.query.buyDate.Format("yyyy-MM-dd");
+                            }
+                            order.buyDate = that.query.buyDate.Format("yyyy-MM-dd");
+                            that.orderList.push(order);
+                            that.visible = false;
+                            that.selectStockId = "";
+                            that.stockList = [];
+                            that.stock = {};
+                            that.resetForm();
+                        }
+                    });
+                },
+                loadData: function () {
+                    this.stockList.push({})
+                    this.$http.get('/stock/api/list',{}).then(function(response){
+                        this.list = response.data;
+                    }, function(response){
+
+                    }).bind(this);
+                    this.$http.get('/stock/api/supplierList',{}).then(function(response){
+                        this.supplierList = response.data;
+                    }, function(response){
+
+                    }).bind(this);
+                },
+                saveOrder: function () {
+                    if(this.orderList.length==0){
+                        this.$Message.error('请先选择物品填写单据！');
+                    }else{
+                        this.loading = true;
+                    }
+                },
+                submitForm: function () {
+                    if(this.selectStockId.split("-")[1]){
+                        this.$http.get('/stock/api/info/'+this.selectStockId.split("-")[1],{}).then(function(response){
+                            this.stock = response.data;
+                            this.resetForm();
+                            this.visible = true;
+                        }, function(response){
+
+                        }).bind(this);
+                    }else{
+                        this.$Message.error('请先选择物品');
+                    }
+                },
+                submitForm2: function (item) {
+//                    console.log(item.split("-")[1])
+                    if(item.split("-")[1]){
+                        this.$http.get('/stock/api/info/'+item.split("-")[1],{}).then(function(response){
+                            this.stock = response.data;
+                            this.resetForm();
+                            this.visible = true;
+                        }, function(response){
+
+                        }).bind(this);
+                    }else{
+
+                    }
+                },
+                resetForm: function () {
+                    this.query.price = "";
+                    this.query.count = "";
+                    this.query.total = "";
+                },
+                remoteMethod: function (query) {
 //                alert(query)
-                if (query !== '') {
-                    this.stockList = this.list.filter(function(elem, pos) {
-                        return elem.abbr.toLowerCase().indexOf(query.toLowerCase()) == 0||elem.stockName.toLowerCase().indexOf(query.toLowerCase()) > -1;
-                    })
-                }else{
-                    this.stockList = [];
+                    if (query !== '') {
+                        this.stockList = this.list.filter(function(elem, pos) {
+                            return elem.abbr.toLowerCase().indexOf(query.toLowerCase()) == 0||elem.stockName.toLowerCase().indexOf(query.toLowerCase()) > -1;
+                        })
+                    }else{
+                        this.stockList = [];
+                    }
+                },
+                remove: function (index) {
+                    this.orderList.splice(index, 1);
                 }
             }
         }
-    }
 
-    var routes = [
-        {
-            path: '/',
-            name: 'stock_in',
-            component: stock_in
-        }
+        var routes = [
+            {
+                path: '/',
+                name: 'stock_in',
+                component: stock_in
+            }
+        ]
 
-    ]
+        var router = new VueRouter({
+            routes: routes
+        });
 
-    var router = new VueRouter({
-        routes: routes
-    });
+        router.beforeEach( function(to, from, next) {
+            next()
+        })
 
-    router.beforeEach( function(to, from, next) {
-        next()
-    })
+        var app = new Vue({
+            el:'#app',
+            router:router
+        })
 
-    var app = new Vue({
-        el:'#app',
-        router:router
-    })
+        var breadcrumb = new Vue({
+            el:'#layout-breadcrumb'
+        })
 
-    var breadcrumb = new Vue({
-        el:'#layout-breadcrumb'
-    })
-
-</script>
+    </script>
 </div>
 </body>
 </html>

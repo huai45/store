@@ -2,6 +2,7 @@ package com.huai.stock.controller;
 
 import com.huai.common.domain.Result;
 import com.huai.stock.domain.Stock;
+import com.huai.stock.domain.Supplier;
 import com.huai.stock.service.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,26 @@ public class StockRestController {
     Object list() {
         logger.info(" StockRestController list");
         List<Stock> stocks = stockService.findStockList();
-        logger.info("stock : {} ",stocks);
+        logger.info("stocks : {} ",stocks);
         return stocks;
+    }
+
+    @GetMapping("/supplierList")
+    Object supplierList() {
+        logger.info(" StockRestController supplierList");
+        List<Supplier> supplierList = stockService.findSupplierList();
+        logger.info("supplierList : {} ",supplierList);
+        return supplierList;
+    }
+
+
+
+    @GetMapping("/info/{stockId}")
+    Object info(@PathVariable String stockId) {
+        logger.info(" StockRestController info  stockId = {} ",stockId);
+        Stock stock = stockService.getStockById(stockId);
+        logger.info("stock : {} ",stock);
+        return stock;
     }
 
     @PostMapping("/submitIn")
