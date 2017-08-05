@@ -38,8 +38,6 @@ public class StockRestController {
         return supplierList;
     }
 
-
-
     @GetMapping("/info/{stockId}")
     Object info(@PathVariable String stockId) {
         logger.info(" StockRestController info  stockId = {} ",stockId);
@@ -47,13 +45,5 @@ public class StockRestController {
         logger.info("stock : {} ",stock);
         return stock;
     }
-
-    @PostMapping("/submitIn")
-    Object submitIn(@RequestBody Map vo) {
-        logger.info("  auth   vo = {}",vo);
-        return Result.success("登录成功","/index");
-    }
-
-
 
 }

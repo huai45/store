@@ -295,6 +295,19 @@
                         this.$Message.error('请先选择物品填写单据！');
                     }else{
                         this.loading = true;
+                        this.$http.post('/stock/api/order/saveIn',this.orderList,{
+                        }).then(function(response){
+                            this.loading = false;
+                            if(response.data.success==true){
+
+                            }else{
+
+                            }
+                        }, function(response){
+                            this.loading = false;
+                        })
+
+
                     }
                 },
                 submitForm: function () {

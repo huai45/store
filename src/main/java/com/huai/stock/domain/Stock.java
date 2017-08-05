@@ -3,6 +3,7 @@ package com.huai.stock.domain;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by huai23 on 2017/8/4.
@@ -17,6 +18,10 @@ public class Stock {
     private String abbr;
 
     private String type;
+
+    private String categoryId;
+
+    private String supplierId;
 
     private BigDecimal price;
 
@@ -37,6 +42,8 @@ public class Stock {
     private String status;
 
     private String image;
+
+    private Date lastBuyDate;
 
     private String remark;
 
