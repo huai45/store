@@ -46,4 +46,9 @@ public class StockOrderService {
         result.setMsg("提交成功");
         return result;
     }
+
+    public List<StockOrder> getUseableInOrderList(String stockId) {
+        List<StockOrder> orders = stockOrderRepository.getUseableInOrderList(stockId);
+        return orders;
+    }
 }

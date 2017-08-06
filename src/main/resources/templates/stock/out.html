@@ -4,7 +4,7 @@
       layout:decorator="layout/default">
 <head>
 <meta charset="utf-8" />
-<title>采购</title>
+<title>领取</title>
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" th:href="@{/styles/iview.css}" />
@@ -16,10 +16,10 @@
 </head>
 <body style="background-color: #eee;">
 <div layout:fragment="content" style="width:1280px;min-height: 600px;margin:15px auto;background-color: #ffffff;">
-    <template id="stock_in" style="">
+    <template id="order_page" style="">
         <div>
-            <Modal v-model="visible" title="请填写采购信息" ok-text = "确定" @on-ok="add('orderForm')" width="900" >
-                <i-form ref="orderForm" :model="query" :rules="orderRule" :label-width="80" >
+            <Modal v-model="visible" title="请填写领取信息" ok-text = "确定" @on-ok="add('orderForm')" width="900" >
+                <i-form ref="orderForm" :model="orderForm" :label-width="80" >
                     <Row>
                         <i-col span="8" >
                             <Form-item label="名称：">
@@ -55,44 +55,37 @@
                         </i-col>
                     </Row>
                     <Row>
-                        <i-col span="8" >
-                            <Form-item label="单价：" prop="price">
-                                <Input-number v-model="query.price" style="width:200px" ></Input-number>
-                            </Form-item>
-                        </i-col>
-                        <i-col span="8" >
-                            <Form-item label="数量：" prop="count">
-                                <Input-number v-model="query.count" style="width:200px" ></Input-number>
-                            </Form-item>
-                        </i-col>
-                        <i-col span="8" >
-                            <Form-item label="总价：" prop="total">
-                                <Input-number v-model="query.total" style="width:200px" disabled ></Input-number>
-                            </Form-item>
+                        <i-col span="24" >
+                            <div style="margin-bottom:20px;font-size:14px;font-weight: bold;">
+                                可领取清单如下：
+                            </div>
                         </i-col>
                     </Row>
-                    <Row>
-                        <i-col span="8" >
-                            <Form-item label="供应商：" prop="supplierId">
-                                <i-select v-model="query.supplierId" filterable style="width:200px">
-                                    <i-option v-for="supplier in supplierList" :value="supplier.supplierId" :key="supplier.supplierName">{{ supplier.supplierName }}</i-option>
-                                </i-select>
-                            </Form-item>
-                        </i-col>
-                        <i-col span="8" >
-                            <Form-item label="采购日期：" prop="buyDate">
-                                <Date-picker type="date" placeholder="选择日期" clearable=false v-model="query.buyDate"></Date-picker>
-                            </Form-item>
-                        </i-col>
-                        <i-col span="8" >
-                            <Form-item label="挂账：" prop="gender">
-                                <Radio-group v-model="query.gz">
-                                    <Radio label="1">是</Radio>
-                                    <Radio label="0">否</Radio>
-                                </Radio-group>
-                            </Form-item>
-                        </i-col>
-                    </Row>
+                    <Form-item
+                            v-for="(item, index) in orderForm.usableOrders"
+                            :key="index"
+                            :label-width="10"
+                            :prop="'usableOrders.' + index + '.outCount'"
+                            :rules="{ type: 'number' , min:0 ,message: '数量必须大于零', trigger: 'blur' }">
+                        <Row>
+                            <i-col span="6" style="text-align:left;">
+                                入库日期：{{item.operDate}}
+                            </i-col>
+                            <i-col span="4">
+                                单价： ￥ {{item.price}}
+                            </i-col>
+                            <i-col span="4">
+                                剩余数量：{{item.usable}}  {{stock.unit}}
+                            </i-col>
+                            <i-col span="4" style="text-align:center;">
+                                本次领取数量：
+                            </i-col>
+                            <i-col span="6">
+                                <Input-number v-model="item.outCount" style="width:120px" ></Input-number>
+                            </i-col>
+                        </Row>
+                    </Form-item>
+
                 </i-form>
                 <div slot="footer" style="text-align:center">
                     <i-button type="primary" @click="add('orderForm')" size="large" style="width:120px;">确定</i-button>
@@ -131,7 +124,7 @@
             <Breadcrumb>
                 <Breadcrumb-item href="#">库存</Breadcrumb-item>
                 <Breadcrumb-item href="#">单据</Breadcrumb-item>
-                <Breadcrumb-item>采购</Breadcrumb-item>
+                <Breadcrumb-item>领取</Breadcrumb-item>
             </Breadcrumb>
         </div>
         <div style="height:15px;background-color: #eee;"></div>
@@ -147,9 +140,9 @@
     <script th:src="@{/js/common.js}"></script>
     <script th:src="@{/js/const.js}"></script>
     <script th:inline="javascript">
-        window.head.active="stock_in";
-        var stock_in = {
-            template: '#stock_in',
+        window.head.active="stock_out";
+        var order_page = {
+            template: '#order_page',
             data: function() {
                 return {
                     columns: [
@@ -162,7 +155,7 @@
                             key: 'price'
                         },
                         {
-                            title: '采购数量',
+                            title: '领取数量',
                             key: 'count'
                         },
                         {
@@ -174,12 +167,12 @@
                             key: 'total'
                         },
                         {
-                            title: '采购日期',
+                            title: '领取日期',
                             key: 'operDate'
                         },
                         {
-                            title: '挂账',
-                            key: 'gz'
+                            title: '领取部门',
+                            key: 'departId'
                         },
                         {
                             title: '操作',
@@ -224,13 +217,14 @@
                     list:[
 
                     ],
-                    query:{
+                    orderForm:{
                         price:"",
                         count:"",
                         total:"",
                         gz:"0",
                         supplierId:"supplier147282",
-                        buyDate:new Date()
+                        buyDate:new Date(),
+                        usableOrders:[]
                     },
                     stock:{
                         stockId:"",
@@ -252,38 +246,24 @@
             },
             methods: {
                 add: function (name) {
-                    if(this.query.price&&this.query.price){
-                        this.query.total = parseFloat(this.query.price * this.query.count).toFixed(2);
-                    }
                     var that = this;
                     this.$refs[name].validate(function(valid){
-                        if(valid){
-                            var order = {};
-                            order.stockId = that.stock.stockId;
-                            order.stockName = that.stock.stockName;
-                            order.type = Global.stock.order.in;
-                            order.unit = that.stock.unit;
-                            order.price = that.query.price;
-                            order.count = that.query.count;
-                            order.total = that.query.total;
-                            order.gz = that.query.gz;
-                            order.supplierId = that.query.supplierId;
-                            if(that.query.buyDate){
-                                order.operDate = that.query.buyDate.Format("yyyy-MM-dd");
-                            }
-                            order.operDate = that.query.buyDate.Format("yyyy-MM-dd");
-                            that.orderList.push(order);
-                            that.visible = false;
-                            that.selectStockId = "";
-                            that.stockList = [];
-                            that.stock = {};
-                            that.resetForm();
-                        }
+                        alert(valid)
+//                        if(valid){
+//                            var order = {};
+//
+//                            that.orderList.push(order);
+//                            that.visible = false;
+//                            that.selectStockId = "";
+//                            that.stockList = [];
+//                            that.stock = {};
+//                            that.resetForm();
+//                        }
                     });
                 },
                 loadData: function () {
                     this.stockList.push({})
-                    this.$http.get('/stock/api/list',{}).then(function(response){
+                    this.$http.get('/stock/api/list?type=2',{}).then(function(response){
                         this.list = response.data;
                     }, function(response){
 
@@ -299,7 +279,7 @@
                         this.$Message.error('请先选择物品填写单据！');
                     }else{
                         this.loading = true;
-                        this.$http.post('/stock/api/order/saveIn',this.orderList,{
+                        this.$http.post('/stock/api/order/saveOut',this.orderList,{
                         }).then(function(response){
                             this.loading = false;
                             if(response.data.success==true){
@@ -319,8 +299,9 @@
                 },
                 submitForm: function () {
                     if(this.selectStockId.split("-")[1]){
-                        this.$http.get('/stock/api/info/'+this.selectStockId.split("-")[1],{}).then(function(response){
-                            this.stock = response.data;
+                        this.$http.get('/stock/api/infoAndUsableOrder/'+this.selectStockId.split("-")[1],{}).then(function(response){
+                            this.stock = response.data.stock;
+                            this.orderForm.usableOrders = response.data.orders;
                             this.resetForm();
                             this.visible = true;
                         }, function(response){
@@ -331,10 +312,13 @@
                     }
                 },
                 submitForm2: function (item) {
-//                    console.log(item.split("-")[1])
                     if(item.split("-")[1]){
-                        this.$http.get('/stock/api/info/'+item.split("-")[1],{}).then(function(response){
-                            this.stock = response.data;
+                        this.$http.get('/stock/api/infoAndUsableOrder/'+item.split("-")[1],{}).then(function(response){
+                            this.stock = response.data.stock;
+                            this.orderForm.usableOrders = response.data.orders;
+                            this.orderForm.usableOrders.forEach(function(temp){
+                                temp.outCount = 0;
+                            })
                             this.resetForm();
                             this.visible = true;
                         }, function(response){
@@ -345,12 +329,9 @@
                     }
                 },
                 resetForm: function () {
-                    this.query.price = "";
-                    this.query.count = "";
-                    this.query.total = "";
+
                 },
                 remoteMethod: function (query) {
-//                alert(query)
                     if (query !== '') {
                         this.stockList = this.list.filter(function(elem, pos) {
                             return elem.abbr.toLowerCase().indexOf(query.toLowerCase()) == 0||elem.stockName.toLowerCase().indexOf(query.toLowerCase()) > -1;
@@ -374,8 +355,8 @@
         var routes = [
             {
                 path: '/',
-                name: 'stock_in',
-                component: stock_in
+                name: 'order_page',
+                component: order_page
             }
         ]
 

@@ -1,15 +1,9 @@
 package com.huai.stock.controller;
 
-import com.huai.common.domain.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Map;
 
 @Controller
 @RequestMapping("/stock")
@@ -19,9 +13,29 @@ public class StockController {
 
     @RequestMapping("/in")
     String in() {
-        logger.info("LoginController.login");
+        logger.info("StockController.in");
         return "stock/in";
     }
+
+    @RequestMapping("/out")
+    String out() {
+        logger.info("StockController.out");
+        return "stock/out";
+    }
+
+    @RequestMapping("/return")
+    String returnPage() {
+        logger.info("StockController.return");
+        return "stock/return";
+    }
+
+    @RequestMapping("/back")
+    String back() {
+        logger.info("StockController.out");
+        return "stock/out";
+    }
+
+
 
 
 

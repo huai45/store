@@ -2,7 +2,9 @@ package com.huai.stock.controller;
 
 import com.huai.common.domain.Result;
 import com.huai.stock.domain.Stock;
+import com.huai.stock.domain.StockOrder;
 import com.huai.stock.domain.Supplier;
+import com.huai.stock.service.StockOrderService;
 import com.huai.stock.service.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +24,9 @@ public class StockRestController {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private StockOrderService stockOrderService;
 
     @GetMapping("/list")
     Object list(@RequestParam(value="type",required=false)String type) {
@@ -44,6 +50,21 @@ public class StockRestController {
         Stock stock = stockService.getStockById(stockId);
         logger.info("stock : {} ",stock);
         return stock;
+    }
+
+    @GetMapping("/infoAndUsableOrder/{stockId}")
+    Object infoAndUsableOrder(@PathVariable String stockId) {
+        logger.info(" StockRestController info  stockId = {} ",stockId);
+        Stock stock = stockService.getStockById(stockId);
+
+        List<StockOrder> orders = stockOrderService.getUseableInOrderList(stockId);
+
+        Map result = new HashMap();
+        result.put("stock",stock);
+        result.put("orders",orders);
+
+        logger.info("result : {} ",result);
+        return result;
     }
 
 }
