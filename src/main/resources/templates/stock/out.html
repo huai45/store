@@ -66,10 +66,10 @@
                             :key="index"
                             :label-width="10"
                             :prop="'usableOrders.' + index + '.outCount'"
-                            :rules="{ type: 'number' , min:0 ,message: '数量必须大于零', trigger: 'blur' }">
+                            :rules="{ type: 'number' , max: item.usable ,message: '领取数量不能大于剩余数量', trigger: 'blur' }">
                         <Row>
                             <i-col span="6" style="text-align:left;">
-                                入库日期：{{item.operDate}}
+                                入库日期：{{new Date(item.operDate).Format("yyyy-MM-dd")}}
                             </i-col>
                             <i-col span="4">
                                 单价： ￥ {{item.price}}
@@ -107,7 +107,7 @@
                     >
                         <i-option v-for="item in stockList" :value="item.abbr+'-'+item.stockId" :key="item.stockName">{{item.stockName}}</i-option>
                     </i-select>
-                    <i-button type="primary" @click="submitForm" style="margin-left: 20px;">填单</i-button>
+                    <i-button type="primary" @click="submitForm" style="margin-left: 20px;">填领取单</i-button>
 
                 </i-col>
             </Row>
@@ -147,8 +147,24 @@
                 return {
                     columns: [
                         {
+                            title: '入库单号',
+                            key: 'relationId',
+                            render: function(h, params) {
+                                var str="";
+                                console.log("row.relationId="+params.row.relationId);
+                                if(params.row.relationId.length>20){
+                                    str = params.row.relationId.substr(10,6);
+                                }
+                                return  str;
+                            }
+                        },
+                        {
                             title: '物品名称',
                             key: 'stockName'
+                        },
+                        {
+                            title: '入库日期',
+                            key: 'inDate'
                         },
                         {
                             title: '采购单价',
@@ -218,11 +234,7 @@
 
                     ],
                     orderForm:{
-                        price:"",
-                        count:"",
-                        total:"",
-                        gz:"0",
-                        supplierId:"supplier147282",
+                        departId:"1",
                         buyDate:new Date(),
                         usableOrders:[]
                     },
@@ -248,17 +260,33 @@
                 add: function (name) {
                     var that = this;
                     this.$refs[name].validate(function(valid){
-                        alert(valid)
-//                        if(valid){
-//                            var order = {};
-//
-//                            that.orderList.push(order);
-//                            that.visible = false;
-//                            that.selectStockId = "";
-//                            that.stockList = [];
-//                            that.stock = {};
-//                            that.resetForm();
-//                        }
+                        if(valid){
+                            that.orderForm.usableOrders.forEach(function(temp){
+                                if(temp.outCount==0){
+                                    return;
+                                }
+                                var order = {};
+                                order.total = parseFloat(temp.price * temp.outCount).toFixed(2);
+                                order.inDate = new Date(temp.operDate).Format("yyyy-MM-dd");
+                                order.relationId = temp.orderId;
+                                order.type = Global.stock.order.out;
+                                order.stockId = temp.stockId;
+                                order.stockName = that.stock.stockName;
+                                order.unit = that.stock.unit;
+                                order.price = temp.price;
+                                order.count = temp.outCount;
+                                order.departId = that.orderForm.departId;
+                                if(that.orderForm.buyDate){
+                                    order.operDate = that.orderForm.buyDate.Format("yyyy-MM-dd");
+                                }
+                                that.orderList.push(order);
+                            })
+                            that.visible = false;
+                            that.selectStockId = "";
+                            that.stockList = [];
+                            that.stock = {};
+                            that.resetForm();
+                        }
                     });
                 },
                 loadData: function () {
@@ -299,10 +327,13 @@
                 },
                 submitForm: function () {
                     if(this.selectStockId.split("-")[1]){
+                        this.resetForm();
                         this.$http.get('/stock/api/infoAndUsableOrder/'+this.selectStockId.split("-")[1],{}).then(function(response){
                             this.stock = response.data.stock;
                             this.orderForm.usableOrders = response.data.orders;
-                            this.resetForm();
+                            this.orderForm.usableOrders.forEach(function(temp){
+                                temp.outCount = 0;
+                            })
                             this.visible = true;
                         }, function(response){
 
@@ -313,13 +344,13 @@
                 },
                 submitForm2: function (item) {
                     if(item.split("-")[1]){
+                        this.resetForm();
                         this.$http.get('/stock/api/infoAndUsableOrder/'+item.split("-")[1],{}).then(function(response){
                             this.stock = response.data.stock;
                             this.orderForm.usableOrders = response.data.orders;
                             this.orderForm.usableOrders.forEach(function(temp){
                                 temp.outCount = 0;
                             })
-                            this.resetForm();
                             this.visible = true;
                         }, function(response){
 
@@ -329,7 +360,8 @@
                     }
                 },
                 resetForm: function () {
-
+                    this.stock={}
+                    this.orderForm.usableOrders=[]
                 },
                 remoteMethod: function (query) {
                     if (query !== '') {

@@ -51,4 +51,18 @@ public class StockOrderService {
         List<StockOrder> orders = stockOrderRepository.getUseableInOrderList(stockId);
         return orders;
     }
+
+    @Transactional
+    public Result saveOut(List<StockOrder> orders) {
+        Result result = new Result();
+        for(StockOrder order : orders){
+            order.setOrderId(XUtil.newId());
+            order.setUsable(order.getCount());
+            stockOrderRepository.saveOrder(order);
+        }
+        result.setSuccess(true);
+        result.setMsg("领取单提交成功");
+       return result;
+    }
+
 }

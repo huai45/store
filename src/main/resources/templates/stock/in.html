@@ -114,7 +114,7 @@
                     >
                         <i-option v-for="item in stockList" :value="item.abbr+'-'+item.stockId" :key="item.stockName">{{item.stockName}}</i-option>
                     </i-select>
-                    <i-button type="primary" @click="submitForm" style="margin-left: 20px;">填单</i-button>
+                    <i-button type="primary" @click="submitForm" style="margin-left: 20px;">填采购单</i-button>
 
                 </i-col>
             </Row>
@@ -333,9 +333,9 @@
                 submitForm2: function (item) {
 //                    console.log(item.split("-")[1])
                     if(item.split("-")[1]){
+                        this.resetForm();
                         this.$http.get('/stock/api/info/'+item.split("-")[1],{}).then(function(response){
                             this.stock = response.data;
-                            this.resetForm();
                             this.visible = true;
                         }, function(response){
 

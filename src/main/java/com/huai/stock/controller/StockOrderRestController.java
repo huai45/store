@@ -19,9 +19,15 @@ public class StockOrderRestController {
     private StockOrderService stockOrderService;
 
     @PostMapping("/saveIn")
-    Object saveIn(@RequestBody List<StockOrder> OrderIns) {
-        logger.info("  saveIn   OrderIns = {}",OrderIns);
-        return stockOrderService.saveIn(OrderIns);
+    Object saveIn(@RequestBody List<StockOrder> orders) {
+        logger.info("  saveIn   orders = {}",orders);
+        return stockOrderService.saveIn(orders);
+    }
+
+    @PostMapping("/saveOut")
+    Object saveOut(@RequestBody List<StockOrder> orders) {
+        logger.info("  saveOut   orders = {}",orders);
+        return stockOrderService.saveOut(orders);
     }
 
 
