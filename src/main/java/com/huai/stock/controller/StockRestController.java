@@ -23,9 +23,9 @@ public class StockRestController {
     private StockService stockService;
 
     @GetMapping("/list")
-    Object list() {
-        logger.info(" StockRestController list");
-        List<Stock> stocks = stockService.findStockList();
+    Object list(@RequestParam(value="type",required=false)String type) {
+        logger.info(" StockRestController list type = {}",type);
+        List<Stock> stocks = stockService.findStockList(type);
         logger.info("stocks : {} ",stocks);
         return stocks;
     }

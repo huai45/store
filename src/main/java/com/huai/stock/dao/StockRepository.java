@@ -15,8 +15,10 @@ import java.util.List;
 @Mapper
 public interface StockRepository {
 
-    @Select(" select stock_id,stock_name,abbr,type,price,count,unit,category_id,storage_id,supplier_id,brand,origin,alart_count,alarm_top,status,image,remark,created from stock  ")
-    List<Stock> findStockList();
+    @Select("<script>   select stock_id,stock_name,abbr,type,price,count,unit,category_id,storage_id,supplier_id,brand,origin,alart_count,alarm_top,status,image,remark,created from stock where 1 = 1 " +
+            " <if test=\"type != null\"> and type = #{type} </if>" +
+            "</script> ")
+    List<Stock> findStockList(@Param("type")String type);
 
     @Select(" select stock_id,stock_name,abbr,type,price,count,unit,category_id,storage_id,supplier_id,brand,origin,alart_count,alarm_top,status,image,remark,created from stock where stock_id = #{stockId} ")
     Stock getStockById(@Param("stockId")String stockId);

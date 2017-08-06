@@ -17,8 +17,8 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    public List<Stock> findStockList() {
-        List<Stock> stockList = stockRepository.findStockList();
+    public List<Stock> findStockList(String type) {
+        List<Stock> stockList = stockRepository.findStockList(type);
         return stockList;
     }
 
