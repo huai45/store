@@ -9,9 +9,15 @@ import java.util.Date;
  * Created by huai23 on 2017/8/5.
  */
 @Data
-public class OrderIn {
+public class StockOrder {
+
+    private String orderId;
+
+    private String type;
 
     private String stockId;
+
+    private String stockName;
 
     private BigDecimal price;
 
@@ -19,15 +25,25 @@ public class OrderIn {
 
     private BigDecimal total;
 
+    private BigDecimal usable;
+
+    private Integer status;
+
     private String supplierId;
 
-    private String status;
+    private String supplierName;
+
+    private String departId;
+
+    private String departName;
+
+    private Date operDate;
 
     private String staffId;
 
-    private Date buyDate;
-
     private String auditStaffId;
+
+    private Integer auditTag;
 
     private Date auditTime;
 

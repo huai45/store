@@ -3,7 +3,7 @@ package com.huai.stock.service;
 import com.huai.common.domain.Result;
 import com.huai.stock.dao.StockOrderRepository;
 import com.huai.stock.dao.StockRepository;
-import com.huai.stock.domain.OrderIn;
+import com.huai.stock.domain.StockOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class StockOrderService {
     @Autowired
     private StockOrderRepository stockOrderRepository;
 
-    public Result saveIn(List<OrderIn> orderIns) {
+    public Result saveIn(List<StockOrder> orderIns) {
         Result result = new Result();
 
 
