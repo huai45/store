@@ -25,3 +25,16 @@ Date.prototype.Format = function (fmt) { //author: meizz
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+
+function getStockType(type){
+    var type_show = '';
+    if(type!=null){
+        if(type==1){
+            type_show = "直拨";
+        }
+        if(type==2){
+            type_show = "入库";
+        }
+    }
+    return type_show;
+}

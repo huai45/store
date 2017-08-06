@@ -2,37 +2,43 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
-    <meta charset="utf-8" />
-    <title>首页</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" th:href="@{/styles/iview.css}" />
-    <style type="text/css">
-        .layout-logo{
-            width: 120px;
-            line-height: 60px;
-            float: left;
-            position: relative;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .layout-nav-left{
-            float: left;
-        }
-        .layout-nav-right{
-            float: right;
-        }
-        .layout-copy{
-            text-align: center;
-            padding: 10px 0 20px;
-            color: #9ea7b4;
-        }
-    </style>
+<meta charset="utf-8" />
+<title>首页</title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" th:href="@{/styles/iview.css}" />
+<style type="text/css">
+.layout-logo{
+    width: 120px;
+    line-height: 60px;
+    float: left;
+    position: relative;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+.layout-nav-left{
+    float: left;
+}
+.layout-nav-right{
+    float: right;
+}
+.layout-copy{
+    text-align: center;
+    padding: 10px 0 20px;
+    color: #9ea7b4;
+}
+</style>
+<script th:src="@{/js/vue.min.js}"></script>
+<script th:src="@{/js/iview.min.js}"></script>
+<script th:src="@{/js/vue-router.js}"></script>
+<script th:src="@{/js/vue-resource.min.js}"></script>
+<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/js/common.js}"></script>
 </head>
 <body>
 <div id="head" style="">
-    <i-menu mode="horizontal" :theme="theme1" active-name="home" @on-select="handleSelect" >
+    <i-menu mode="horizontal" :theme="theme1" :active-name="active" @on-select="handleSelect" >
         <div class="layout-logo">N-STORE</div>
         <div class="layout-nav-left">
             <Menu-item name="home">
@@ -66,12 +72,11 @@
                 <Menu-group title="单据录入">
                     <Menu-item name="stock_in">采购</Menu-item>
                     <Menu-item name="stock_out">领取</Menu-item>
-                    <Menu-item name="stock_out">退领</Menu-item>
-                    <Menu-item name="stock_out">退货</Menu-item>
+                    <Menu-item name="stock_back">退领</Menu-item>
+                    <Menu-item name="stock_return">退货</Menu-item>
                 </Menu-group>
-                <Menu-group title="留存">
-                    <Menu-item name="3-4">用户留存</Menu-item>
-                    <Menu-item name="3-5">流失用户</Menu-item>
+                <Menu-group title="查询">
+                    <Menu-item name="order_unaudit">待审单据</Menu-item>
                 </Menu-group>
             </Submenu>
             <Menu-item name="setting">
@@ -97,59 +102,56 @@
         </div>
     </i-menu>
 </div>
+<script th:inline="javascript">
+window.head = new Vue({
+    el: '#head',
+    data: {
+        visible: false,
+        theme1: 'light',
+        active:"home"
+    },
+    methods: {
+        show: function () {
+            this.visible = true;
+        },
+        handleSelect: function(name) {
+            if("logout"==name){
+                document.location.href="/";
+            }else if("stock_in"==name){
+                document.location.href="/stock/in";
+            }else{
+                alert(name);
+            }
+        },
+        goback: function() {
+            history.back(-1);
+        }
+    }
+})
+</script>
 <div layout:fragment="content"></div>
 <div id="foot" class="layout-copy">
     2011-2017 &copy; n-store
     <Back-top></Back-top>
 </div>
-<script th:src="@{/js/vue.min.js}"></script>
-<script th:src="@{/js/iview.min.js}"></script>
-<script th:src="@{/js/vue-router.js}"></script>
-<script th:src="@{/js/vue-resource.min.js}"></script>
-<script th:src="@{/js/jquery-3.2.1.min.js}"></script>
-<script th:src="@{/js/common.js}"></script>
 <script th:inline="javascript">
-    new Vue({
-        el: '#head',
-        data: {
-            visible: false,
-            theme1: 'light'
+new Vue({
+    el: '#foot',
+    data: {
+        visible: false
+    },
+    methods: {
+        show: function () {
+            this.visible = true;
         },
-        methods: {
-            show: function () {
-                this.visible = true;
-            },
-            handleSelect: function(name) {
-                if("logout"==name){
-                    document.location.href="/";
-                }else if("stock_in"==name){
-                    document.location.href="/stock/in";
-                }else{
-                    alert(name);
-                }
-            },
-            goback: function() {
-                history.back(-1);
-            }
+        goback: function() {
+            history.back(-1);
         }
-    })
-    new Vue({
-        el: '#foot',
-        data: {
-            visible: false
-        },
-        methods: {
-            show: function () {
-                this.visible = true;
-            },
-            goback: function() {
-                history.back(-1);
-            }
-        }
-    })
-    $(function(){
+    }
+})
+$(function(){
 
-    })
+})
 </script>
 </body>
 </html>
