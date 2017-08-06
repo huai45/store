@@ -253,7 +253,7 @@
             methods: {
                 add: function (name) {
                     if(this.query.price&&this.query.price){
-                        this.query.total = this.query.price * this.query.count;
+                        this.query.total = parseFloat(this.query.price * this.query.count).toFixed(2);
                     }
                     var that = this;
                     this.$refs[name].validate(function(valid){
@@ -303,9 +303,14 @@
                         }).then(function(response){
                             this.loading = false;
                             if(response.data.success==true){
-
+                                this.$Modal.success({
+                                    content: response.data.msg
+                                });
+                                this.resetPage();
                             }else{
-
+                                this.$Modal.error({
+                                    content: response.data.msg
+                                });
                             }
                         }, function(response){
                             this.loading = false;
@@ -358,7 +363,13 @@
                 },
                 remove: function (index) {
                     this.orderList.splice(index, 1);
-                }
+                },
+                resetPage: function () {
+                    this.resetForm();
+                    this.selectStockId=""
+                    this.stockList=[]
+                    this.orderList=[]
+                },
             }
         }
 

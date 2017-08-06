@@ -3,7 +3,6 @@ package com.huai.stock.dao;
 import com.huai.stock.domain.StockOrder;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 /**
