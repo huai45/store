@@ -1,6 +1,7 @@
 package com.huai.stock.service;
 
 import com.huai.common.domain.Result;
+import com.huai.common.util.XUtil;
 import com.huai.stock.dao.StockOrderRepository;
 import com.huai.stock.dao.StockRepository;
 import com.huai.stock.domain.StockOrder;
@@ -27,8 +28,11 @@ public class StockOrderService {
 
     public Result saveIn(List<StockOrder> orderIns) {
         Result result = new Result();
-
-
+        for(StockOrder order : orderIns){
+            order.setOrderId(XUtil.newId());
+            order.setUsable(order.getCount());
+            stockOrderRepository.saveOrder(order);
+        }
         return result;
     }
 }

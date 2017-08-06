@@ -8,4 +8,3 @@ Global.stock = {
         check:"check"
     }
 }
-

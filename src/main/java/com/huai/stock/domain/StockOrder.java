@@ -15,6 +15,8 @@ public class StockOrder {
 
     private String type;
 
+    private String gz;
+
     private String stockId;
 
     private String stockName;
@@ -36,6 +38,8 @@ public class StockOrder {
     private String departId;
 
     private String departName;
+
+    private String relationId;
 
     private Date operDate;
 
