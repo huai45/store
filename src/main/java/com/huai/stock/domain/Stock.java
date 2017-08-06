@@ -19,21 +19,21 @@ public class Stock {
 
     private String type;
 
-    private String categoryId;
-
-    private String supplierId;
-
     private BigDecimal price;
 
+    private BigDecimal count;
+
     private String unit;
+
+    private String categoryId;
+
+    private String storageId;
+
+    private String supplierId;
 
     private String brand;
 
     private String origin;
-
-    private BigDecimal count;
-
-    private Double initCount;
 
     private Double alarmCount;
 
@@ -43,8 +43,8 @@ public class Stock {
 
     private String image;
 
-    private Date lastBuyDate;
-
     private String remark;
+
+    private Date created;
 
 }

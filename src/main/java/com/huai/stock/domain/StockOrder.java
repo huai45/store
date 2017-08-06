@@ -51,8 +51,8 @@ public class StockOrder {
 
     private Date auditTime;
 
-    private Date created;
-
     private String remark;
+
+    private Date created;
 
 }
