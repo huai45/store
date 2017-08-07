@@ -1,5 +1,6 @@
 package com.huai.stock.service;
 
+import com.huai.common.util.SessionUtil;
 import com.huai.stock.dao.StockRepository;
 import com.huai.stock.domain.Stock;
 import com.huai.stock.domain.Supplier;
@@ -30,8 +31,7 @@ public class StockService {
     }
 
     public List<Supplier> findSupplierList() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        logger.info(" findSupplierList    user = {} ",request.getSession().getAttribute("user"));
+        logger.info(" findSupplierList    user = {} ", SessionUtil.getSession().getAttribute("user"));
 
         List<Supplier> supplierList = stockRepository.findSupplierList();
         return supplierList;

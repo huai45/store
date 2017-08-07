@@ -1,6 +1,8 @@
 package com.huai.auth.controller;
 
 import com.huai.common.domain.Result;
+import com.huai.common.util.SessionUtil;
+import com.huai.common.util.XUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -23,7 +25,8 @@ public class LoginController {
     String login() {
         logger.info("LoginController.login");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        request.getSession().setAttribute("user","huai23");
+        request.getSession().setAttribute("user","huai23"+ XUtil.currentTime());
+        SessionUtil.put("user","haha"+ XUtil.currentTime());
         return "auth/login";
     }
 
