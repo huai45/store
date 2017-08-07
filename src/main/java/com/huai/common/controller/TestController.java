@@ -1,17 +1,14 @@
 package com.huai.common.controller;
 
-import com.sun.deploy.net.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.*;
-
-import javax.print.attribute.HashPrintJobAttributeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +41,8 @@ public class TestController {
         logger.info(" password = {} ",request.getParameter("password"));
         logger.info(" category = {} ",request.getParameter("category"));
 
-
-        List foods = jdbcTemplate.queryForList("select CONCAT(abbr,'__',food_id) as value, food_name label from td_food ");
-
+        List foods = Collections.EMPTY_LIST;
+//        List foods = jdbcTemplate.queryForList("select CONCAT(abbr,'__',food_id) as value, food_name label from td_food ");
         logger.info(" foods = {} ",foods.size());
 
         Map result = new HashMap();

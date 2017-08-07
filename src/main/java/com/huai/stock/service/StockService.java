@@ -3,9 +3,14 @@ package com.huai.stock.service;
 import com.huai.stock.dao.StockRepository;
 import com.huai.stock.domain.Stock;
 import com.huai.stock.domain.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -13,6 +18,8 @@ import java.util.List;
  */
 @Service
 public class StockService {
+
+    private Logger logger =  LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private StockRepository stockRepository;
@@ -23,6 +30,9 @@ public class StockService {
     }
 
     public List<Supplier> findSupplierList() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        logger.info(" findSupplierList    user = {} ",request.getSession().getAttribute("user"));
+
         List<Supplier> supplierList = stockRepository.findSupplierList();
         return supplierList;
     }
