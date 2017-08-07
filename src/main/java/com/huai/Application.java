@@ -3,8 +3,10 @@ package com.huai;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
+@ImportResource("classpath:META-INF/spring/spring-config.xml")
 public class Application  extends SpringBootServletInitializer {
 
     @Override
