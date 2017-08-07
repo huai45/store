@@ -1,4 +1,4 @@
-package com.huai.stock.controller;
+package com.huai.stock.controller.view;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -30,6 +30,13 @@ public interface StockRepository {
             " <if test=\"stock.price != null\">, price = #{stock.price}</if> " +
             " , modified = now() where stock_id = #{stock.stockId} " +
             "</script> ")
-    int updateStockCount(@Param("stock")Stock stock);
+    int addStockCount(@Param("stock")Stock stock);
+
+
+    @Update("<script>  update stock  set count = count - #{stock.count} " +
+            " <if test=\"stock.price != null\">, price = #{stock.price}</if> " +
+            " , modified = now() where stock_id = #{stock.stockId} and  count >=  #{stock.count} " +
+            "</script> ")
+    int reduceStockCount(@Param("stock")Stock stock);
 
 }

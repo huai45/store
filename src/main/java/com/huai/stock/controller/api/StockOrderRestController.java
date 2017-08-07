@@ -1,4 +1,4 @@
-package com.huai.stock.controller;
+package com.huai.stock.controller.api;
 
 import com.huai.stock.domain.StockOrder;
 import com.huai.stock.service.StockOrderService;

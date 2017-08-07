@@ -1,4 +1,4 @@
-package com.huai.stock.controller;
+package com.huai.stock.controller.api;
 
 import com.huai.common.domain.Result;
 import com.huai.stock.domain.Stock;

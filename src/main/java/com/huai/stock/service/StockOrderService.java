@@ -36,7 +36,7 @@ public class StockOrderService {
             stock.setStockId(order.getStockId());
             stock.setPrice(order.getPrice());
             stock.setCount(order.getCount());
-            stockRepository.updateStockCount(stock);
+            stockRepository.addStockCount(stock);
 
             order.setOrderId(XUtil.newId());
             order.setUsable(order.getCount());
