@@ -13,6 +13,8 @@ public class StockOrder {
 
     private String orderId;
 
+    private String chargeId;
+
     private String type;
 
     private String gz;
