@@ -18,7 +18,7 @@
 <div layout:fragment="content" style="width:1280px;min-height: 600px;margin:15px auto;background-color: #ffffff;">
     <template id="order_page" style="">
         <div>
-            <Modal v-model="visible" title="请填写领取信息" ok-text = "确定" @on-ok="add('orderForm')" width="900" >
+            <Modal v-model="visible" title="请填写领取信息" ok-text = "确定" @on-ok="add('orderForm')" width="900" :mask-closable="false" >
                 <i-form ref="orderForm" :model="orderForm" :label-width="80" >
                     <Row>
                         <i-col span="8" >
@@ -88,7 +88,11 @@
 
                 </i-form>
                 <div slot="footer" style="text-align:center">
-                    <i-button type="primary" @click="add('orderForm')" size="large" style="width:120px;">确定</i-button>
+                    <!--<i-button type="primary" @click="add('orderForm')" size="large" style="width:120px;">确定</i-button>-->
+                    <i-button type="primary" size="large" @click="saveOrder('orderForm')" :loading="loading" icon="android-upload" style="">
+                        <span v-if="!loading">提交审核</span>
+                        <span v-else>提交中,请稍后...</span>
+                    </i-button>
                 </div>
             </Modal>
 
@@ -113,10 +117,7 @@
             </Row>
             <i-table border :columns="columns" :data="orderList" no-data-text="尚未录入单据" stripe="true" style="margin-top: 50px;"></i-table>
             <br>
-            <i-button type="primary" size="large" @click="saveOrder" :loading="loading" icon="android-upload" style="margin-left:580px;margin-top:20px">
-                <span v-if="!loading">提交审核</span>
-                <span v-else>提交中,请稍后...</span>
-            </i-button>
+
         </div>
     </template>
     <div id="layout-breadcrumb" class="layout-breadcrumb">
@@ -189,30 +190,6 @@
                         {
                             title: '领取部门',
                             key: 'departId'
-                        },
-                        {
-                            title: '操作',
-                            key: 'action',
-                            align: 'center',
-                            width: 80,
-                            render:function(h, params) {//render 函数传入两个参数，第一个是 h，第二个是对象，包含 row、column 和 index，分别指当前单元格数据，当前列数据，当前是第几行。
-                                var that = this;
-                                return h('i-button',
-                                    {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        on:{
-                                            click:function(){
-                                                //alert(params.row.stockName);
-                                                that.remove(params.index);
-                                            }
-                                        }
-                                    },
-                                    "删除"
-                                );
-                            }.bind(this)
                         }
                     ],
                     orderRule: {
@@ -257,10 +234,24 @@
                 this.loadData()
             },
             methods: {
-                add: function (name) {
+                loadData: function () {
+                    this.stockList.push({})
+                    this.$http.get('/stock/api/list?type=2',{}).then(function(response){
+                        this.list = response.data;
+                    }, function(response){
+
+                    }).bind(this);
+                    this.$http.get('/stock/api/supplierList',{}).then(function(response){
+                        this.supplierList = response.data;
+                    }, function(response){
+
+                    }).bind(this);
+                },
+                saveOrder: function (name) {
                     var that = this;
                     this.$refs[name].validate(function(valid){
                         if(valid){
+                            var postList = [];
                             that.orderForm.usableOrders.forEach(function(temp){
                                 if(temp.outCount==0){
                                     return;
@@ -279,51 +270,38 @@
                                 if(that.orderForm.buyDate){
                                     order.operDate = that.orderForm.buyDate.Format("yyyy-MM-dd");
                                 }
-                                that.orderList.push(order);
+                                postList.push(order);
                             })
-                            that.visible = false;
-                            that.selectStockId = "";
-                            that.stockList = [];
-                            that.stock = {};
-                            that.resetForm();
+                            if(postList.length==0){
+                                that.$Message.error('请填写单据！');
+                            }else{
+                                that.loading = true;
+                                that.$http.post('/stock/api/order/saveOut',postList,{
+                                }).then(function(response){
+                                    that.loading = false;
+                                    if(response.data.success==true){
+                                        that.$Modal.success({
+                                            content: response.data.msg
+                                        });
+                                        that.visible = false;
+                                        that.selectStockId = "";
+                                        that.stockList = [];
+                                        that.stock = {};
+                                        that.resetForm();
+                                        postList.forEach(function(o){
+                                            that.orderList.push(o);
+                                        })
+                                    }else{
+                                        that.$Modal.error({
+                                            content: response.data.msg
+                                        });
+                                    }
+                                }, function(response){
+                                    that.loading = false;
+                                })
+                            }
                         }
                     });
-                },
-                loadData: function () {
-                    this.stockList.push({})
-                    this.$http.get('/stock/api/list?type=2',{}).then(function(response){
-                        this.list = response.data;
-                    }, function(response){
-
-                    }).bind(this);
-                    this.$http.get('/stock/api/supplierList',{}).then(function(response){
-                        this.supplierList = response.data;
-                    }, function(response){
-
-                    }).bind(this);
-                },
-                saveOrder: function () {
-                    if(this.orderList.length==0){
-                        this.$Message.error('请先选择物品填写单据！');
-                    }else{
-                        this.loading = true;
-                        this.$http.post('/stock/api/order/saveOut',this.orderList,{
-                        }).then(function(response){
-                            this.loading = false;
-                            if(response.data.success==true){
-                                this.$Modal.success({
-                                    content: response.data.msg
-                                });
-                                this.resetPage();
-                            }else{
-                                this.$Modal.error({
-                                    content: response.data.msg
-                                });
-                            }
-                        }, function(response){
-                            this.loading = false;
-                        })
-                    }
                 },
                 submitForm: function () {
                     if(this.selectStockId.split("-")[1]){
