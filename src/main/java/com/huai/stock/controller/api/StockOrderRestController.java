@@ -1,5 +1,6 @@
 package com.huai.stock.controller.api;
 
+import com.huai.common.domain.Result;
 import com.huai.stock.domain.StockOrder;
 import com.huai.stock.service.StockOrderService;
 import org.slf4j.Logger;
@@ -27,9 +28,15 @@ public class StockOrderRestController {
     @PostMapping("/saveOut")
     Object saveOut(@RequestBody List<StockOrder> orders) {
         logger.info("  saveOut   orders = {}",orders);
-        return stockOrderService.saveOut(orders);
+        try{
+            return stockOrderService.saveOut(orders);
+        }catch(Exception e){
+            Result result = new Result();
+            result.setSuccess(false);
+            result.setMsg(e.getMessage());
+            return result;
+        }
     }
-
 
 
 }
