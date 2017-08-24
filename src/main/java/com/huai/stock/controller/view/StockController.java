@@ -23,16 +23,16 @@ public class StockController {
         return "stock/out";
     }
 
-    @RequestMapping("/return")
-    String returnPage() {
-        logger.info("StockController.return");
-        return "stock/return";
+    @RequestMapping("/backin")
+    String backin() {
+        logger.info("StockController.backin");
+        return "stock/backin";
     }
 
-    @RequestMapping("/back")
-    String back() {
-        logger.info("StockController.out");
-        return "stock/out";
+    @RequestMapping("/backout")
+    String backout() {
+        logger.info("StockController.backout");
+        return "stock/backout";
     }
 
 

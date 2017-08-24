@@ -49,6 +49,10 @@ public interface StockOrderRepository {
             " from stock_order where stock_id = #{stockId} and type = 'in' and status = 1 and usable > 0 ")
     List<StockOrder> getUseableInOrderList(@Param("stockId")String stockId);
 
+    @Select(" select order_id,stock_id,stock_name,price,count,total,usable,oper_date,status " +
+            " from stock_order where stock_id = #{stockId} and type = 'out' and status = 1 and usable > 0 ")
+    List<StockOrder> getUseableOutOrderList(@Param("stockId")String stockId);
+
     @Select(" select order_id,charge_id,type,gz,stock_id,stock_name,price,count,total,usable," +
             " supplier_id,supplier_name,depart_id,depart_name,relation_id,oper_date,status," +
             " staff_id,audit_staff_id,audit_tag,auditTime,remark,created,modified " +

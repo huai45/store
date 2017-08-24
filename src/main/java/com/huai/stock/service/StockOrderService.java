@@ -62,6 +62,11 @@ public class StockOrderService {
         return orders;
     }
 
+    public List<StockOrder> getUseableOutOrderList(String stockId) {
+        List<StockOrder> orders = stockOrderRepository.getUseableOutOrderList(stockId);
+        return orders;
+    }
+
     @Transactional
     public Result saveOut(List<StockOrder> orders) throws StockException {
         Result result = new Result();

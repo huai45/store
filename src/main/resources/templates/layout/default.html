@@ -73,8 +73,8 @@
                 <Menu-group title="单据录入">
                     <Menu-item name="stock_in">采购</Menu-item>
                     <Menu-item name="stock_out">领取</Menu-item>
-                    <Menu-item name="stock_back">退领</Menu-item>
-                    <Menu-item name="stock_return">退货</Menu-item>
+                    <Menu-item name="stock_backin">退领</Menu-item>
+                    <Menu-item name="stock_backout">退货</Menu-item>
                 </Menu-group>
                 <Menu-group title="查询">
                     <Menu-item name="order_unaudit">待审单据</Menu-item>
@@ -122,6 +122,10 @@ window.head = new Vue({
                 document.location.href="/stock/in";
             }else if("stock_out"==name){
                 document.location.href="/stock/out";
+            }else if("stock_backin"==name){
+                document.location.href="/stock/backin";
+            }else if("stock_backout"==name){
+                document.location.href="/stock/backout";
             }else{
                 alert(name);
             }

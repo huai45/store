@@ -52,12 +52,27 @@ public class StockRestController {
         return stock;
     }
 
-    @GetMapping("/infoAndUsableOrder/{stockId}")
-    Object infoAndUsableOrder(@PathVariable String stockId) {
+    @GetMapping("/infoAndUsableInOrder/{stockId}")
+    Object infoAndUsableInOrder(@PathVariable String stockId) {
         logger.info(" StockRestController info  stockId = {} ",stockId);
         Stock stock = stockService.getStockById(stockId);
 
         List<StockOrder> orders = stockOrderService.getUseableInOrderList(stockId);
+
+        Map result = new HashMap();
+        result.put("stock",stock);
+        result.put("orders",orders);
+
+        logger.info("result : {} ",result);
+        return result;
+    }
+
+    @GetMapping("/infoAndUsableOutOrder/{stockId}")
+    Object infoAndUsableOutOrder(@PathVariable String stockId) {
+        logger.info(" StockRestController info  stockId = {} ",stockId);
+        Stock stock = stockService.getStockById(stockId);
+
+        List<StockOrder> orders = stockOrderService.getUseableOutOrderList(stockId);
 
         Map result = new HashMap();
         result.put("stock",stock);
