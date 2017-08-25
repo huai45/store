@@ -38,5 +38,31 @@ public class StockOrderRestController {
         }
     }
 
+    @PostMapping("/saveBackin")
+    Object saveBackin(@RequestBody List<StockOrder> orders) {
+        logger.info("  saveBackin   orders = {}",orders);
+        try{
+            return stockOrderService.saveBackin(orders);
+        }catch(Exception e){
+            Result result = new Result();
+            result.setSuccess(false);
+            result.setMsg(e.getMessage());
+            return result;
+        }
+    }
+
+    @PostMapping("/saveBackout")
+    Object saveBackout(@RequestBody List<StockOrder> orders) {
+        logger.info("  saveBackout   orders = {}",orders);
+        try{
+            return stockOrderService.saveBackout(orders);
+        }catch(Exception e){
+            Result result = new Result();
+            result.setSuccess(false);
+            result.setMsg(e.getMessage());
+            return result;
+        }
+    }
+
 
 }

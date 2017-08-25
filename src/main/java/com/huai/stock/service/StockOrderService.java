@@ -113,4 +113,28 @@ public class StockOrderService {
         return result;
     }
 
+    @Transactional
+    public Result saveBackin(List<StockOrder> orders) throws StockException {
+        Result result = new Result();
+        String chargeId = XUtil.newId();
+        for(StockOrder order : orders){
+
+        }
+        result.setSuccess(true);
+        result.setMsg("退领单提交成功");
+        return result;
+    }
+
+    @Transactional
+    public Result saveBackout(List<StockOrder> orders) throws StockException {
+        Result result = new Result();
+        String chargeId = XUtil.newId();
+        for(StockOrder order : orders){
+
+        }
+        result.setSuccess(true);
+        result.setMsg("退货单提交成功");
+        return result;
+    }
+
 }

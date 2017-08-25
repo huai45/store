@@ -60,7 +60,9 @@
                                 可退领清单如下：
                             </div>
                             <div v-else style="margin-bottom:20px;font-size:16px;font-weight: bold;text-align: center;color: #ed3f14;">
+                                <div v-if="visible">
                                 暂无可用领取单据！不能退领！
+                                </div>
                             </div>
                         </i-col>
                     </Row>
@@ -71,11 +73,14 @@
                             :prop="'usableOrders.' + index + '.outCount'"
                             :rules="{ type: 'number' , max: item.usable ,message: '领取数量不能大于剩余数量', trigger: 'blur' }">
                         <Row>
-                            <i-col span="6" style="text-align:left;">
+                            <i-col span="5" style="text-align:left;">
                                 领用日期：{{new Date(item.operDate).Format("yyyy-MM-dd")}}
                             </i-col>
-                            <i-col span="4">
+                            <i-col span="3">
                                 单价： ￥ {{item.price}}
+                            </i-col>
+                            <i-col span="4">
+                                领用数量：{{item.count}}  {{stock.unit}}
                             </i-col>
                             <i-col span="4">
                                 可退数量：{{item.usable}}  {{stock.unit}}
@@ -83,7 +88,7 @@
                             <i-col span="4" style="text-align:center;">
                                 本次退领数量：
                             </i-col>
-                            <i-col span="6">
+                            <i-col span="4">
                                 <Input-number v-model="item.outCount" style="width:120px" ></Input-number>
                             </i-col>
                         </Row>
