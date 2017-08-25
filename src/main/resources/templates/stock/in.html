@@ -57,17 +57,17 @@
                     <Row>
                         <i-col span="8" >
                             <Form-item label="单价：" prop="price">
-                                <Input-number v-model="query.price" style="width:200px" ></Input-number>
+                                <Input-number v-model="query.price" style="width:200px" @on-change="calculatePrice1" ></Input-number>
                             </Form-item>
                         </i-col>
                         <i-col span="8" >
                             <Form-item label="数量：" prop="count">
-                                <Input-number v-model="query.count" style="width:200px" ></Input-number>
+                                <Input-number v-model="query.count" style="width:200px" @on-change="calculatePrice2" ></Input-number>
                             </Form-item>
                         </i-col>
                         <i-col span="8" >
                             <Form-item label="总价：" prop="total">
-                                <Input-number v-model="query.total" style="width:200px" disabled ></Input-number>
+                                <Input-number v-model="query.total" style="width:200px" @on-change="calculatePrice3" ></Input-number>
                             </Form-item>
                         </i-col>
                     </Row>
@@ -207,9 +207,6 @@
                         }
                     ],
                     orderRule: {
-                        price: [
-                            { type: 'number' ,required: true, message: '请填写采购单价', trigger: 'blur' }
-                        ],
                         count: [
                             { type: 'number' ,required: true, message: '请填写采购数量', trigger: 'blur' },
                             { type: 'number' , min:0 ,message: '数量必须大于零', trigger: 'blur' }
@@ -252,8 +249,9 @@
             },
             methods: {
                 add: function (name) {
-                    if(this.query.price&&this.query.price){
-                        this.query.total = parseFloat(this.query.price * this.query.count).toFixed(2);
+                    if(this.query.price==""||this.query.total==""){
+                        this.$Message.error('请输入采购单价或总价！');
+                        return false;
                     }
                     var that = this;
                     this.$refs[name].validate(function(valid){
@@ -368,6 +366,23 @@
                     this.stockList=[]
                     this.orderList=[]
                 },
+                calculatePrice1: function () {
+                    if(this.query.count!=""){
+                        this.query.total = parseFloat(this.query.price * this.query.count).toFixed(2);
+                    }
+                },
+                calculatePrice2: function () {
+                    if(this.query.price!=""){
+                        this.query.total = parseFloat(this.query.price * this.query.count).toFixed(2);
+                    }else if(this.query.total!=""&&this.query.count>0){
+                        this.query.price = parseFloat(this.query.total / this.query.count).toFixed(2);
+                    }
+                },
+                calculatePrice3: function () {
+                    if(this.query.count!=""&&this.query.count>0){
+                        this.query.price = parseFloat(this.query.total / this.query.count).toFixed(2);
+                    }
+                }
             }
         }
 
